@@ -16,7 +16,9 @@
 
     "express-session": "^1.18.1",
 
-    "mongoose": "^8.7.2"
+    "mongoose": "^8.7.2",
+
+    "react": "^18.3.1"
 
   },
 
