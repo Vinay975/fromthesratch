@@ -47,7 +47,10 @@ app.post('/login', async (req, res) => {
 
 const PORT = 2000;
 
-app.get('/', (req,res) => "hello people")
+app.get('/', (req,res) => {
+    res.sendFile(__dirname + "/html/index.html");
+
+})
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
