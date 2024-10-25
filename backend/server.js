@@ -3,24 +3,42 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const loginDetails = require('./loginDetails'); 
 const bcrypt = require('bcrypt');
-const bodyPareser = require('body-parser');
-
+const bodyParser = require('body-parser');
+const path = require('path');
 
 const app = express();
+
+// Middleware setup
 app.use(cors());
 app.use(express.json());
-app.use(bodyPareser.urlencoded({extended:true}));
-app.use(express.static('public')); // Serve static files from the public folder
+app.use(bodyParser.urlencoded({ extended: true }));
 
+// Serve static files from the 'public' folder for CSS and other assets
+app.use(express.static('public'));
+
+// Serve the HTML landing page explicitly at the root URL ('/')
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'html', 'index.html'));
+});
+
+// Serve static files from the React app's build directory
+app.use(express.static(path.join(__dirname, '..', 'frontend', 'dist')));
+
+// Route to serve the React app for '/login'
+app.get('/signup', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'frontend', 'dist', 'index.html'));
+});
+
+// MongoDB connection
 mongoose.connect('mongodb+srv://tellagorlavinay78:Vinay123@logindetails.vbb1r.mongodb.net/')
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.log('MongoDB connection error:', err));
 
 // Register route
-app.post('/register', async (req, res) => {
+app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new loginDetails({ name: username, password: hashedPassword});
+    const user = new loginDetails({ name: username, password: hashedPassword });
     
     try {
         await user.save();
@@ -31,7 +49,7 @@ app.post('/register', async (req, res) => {
 });
 
 // Login route
-app.post('/login', async (req, res) => {
+app.post('/signin', async (req, res) => {
     try {
         const { username, password } = req.body;
 
@@ -46,13 +64,13 @@ app.post('/login', async (req, res) => {
     }
 });
 
+// Fallback route for React Router: Serve React app for any other path not specified
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'frontend', 'dist', 'index.html'));
+});
 
+// Start the server
 const PORT = 2000;
-
-app.get('/', (req,res) => {
-    res.sendFile(__dirname + "/html/index.html");
-
-})
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
