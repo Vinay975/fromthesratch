@@ -5,10 +5,12 @@ const loginDetails = require('./loginDetails');
 const bcrypt = require('bcrypt');
 const bodyPareser = require('body-parser');
 
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(bodyPareser.urlencoded({extended:true}));
+app.use(express.static('public')); // Serve static files from the public folder
 
 mongoose.connect('mongodb+srv://tellagorlavinay78:Vinay123@logindetails.vbb1r.mongodb.net/')
   .then(() => console.log("Connected to MongoDB"))
